@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const passport = require("passport");
 
 /**
  * @function validateSignup
@@ -70,9 +71,32 @@ const signup = async (req, res) => {
 };
 
 /**
- * @function
+ * @function signin
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @param {object} passport
+ * @returns {void}
  */
-const signin = () => {};
+const signin = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) {
+      return res.status(500).json(err.message);
+    }
+    if (!user) {
+      return res.status(400).json(info.message);
+    }
+
+    req.logIn(user, (err) => {
+      if (err) {
+        return res.status(500).json(err.message);
+      }
+
+      res.json(user);
+    });
+  })(req, res, next);
+};
+
 /**
  * @function
  */
