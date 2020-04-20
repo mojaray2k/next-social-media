@@ -9,7 +9,7 @@ const passport = require("passport");
  * @param {function} next
  * @summary Middleware function that will help validate data from form
  * inputs
- * @returns
+ * @returns {void} or @returns {error}
  */
 const validateSignup = (req, res, next) => {
   /**
@@ -57,7 +57,7 @@ const validateSignup = (req, res, next) => {
  * @function signup
  * @param {object} req
  * @param {object} res
- * @returns {void}
+ * @returns {void} or @returns {error}
  */
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -79,6 +79,15 @@ const signup = async (req, res) => {
  * @returns {void}
  */
 const signin = (req, res, next) => {
+  /**
+   * @function authenticate
+   * @param {object} err @description Error object
+   * @param {object} user @description User object
+   * @param {object} info @description Information object
+   * @returns {void} or @returns {error} or @returns {information}
+   * @summary authenticate is a @external Passport method
+   * {@link http://www.passportjs.org/packages/passport-local/#authenticate-requests}
+   */
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return res.status(500).json(err.message);
@@ -87,6 +96,14 @@ const signin = (req, res, next) => {
       return res.status(400).json(info.message);
     }
 
+    /**
+     * @function login
+     * @param {object} err @description Error object
+     * @param {object} user @description User object
+     * @returns {object} User Object or @returns {error}
+     * @summary login is a @external Passport method
+     * {@link http://www.passportjs.org/docs/login/}
+     */
     req.logIn(user, (err) => {
       if (err) {
         return res.status(500).json(err.message);
@@ -98,13 +115,42 @@ const signin = (req, res, next) => {
 };
 
 /**
- * @function
+ * @function signout
+ * @param {object} req
+ * @param {object} res
+ * @returns {void}
  */
-const signout = () => {};
+const signout = (req, res) => {
+  /**
+   * @method clearCookie
+   * @summary This is an @memberof Express The next-cookie.sid is create on line 66
+   * of app.js as a part of the sessionConfig object
+   * {@link http://expressjs.com/en/4x/api.html#res.clearCookie}
+   */
+  res.clearCookie("next-cookie.sid");
+  /**
+   * @function logout
+   * @summary logout is a @external Passport method
+   * {@link http://www.passportjs.org/docs/logout/}
+   */
+  req.logout();
+  res.json({ message: "You are now signed out!" });
+};
+
 /**
- * @function
+ * @function checkAuth
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @returns {function} next
+ * or @returns {void} and redirects to the sign page
  */
-const checkAuth = () => {};
+const checkAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/signin");
+};
 
 module.exports = {
   validateSignup,
