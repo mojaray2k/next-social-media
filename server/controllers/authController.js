@@ -58,6 +58,7 @@ const validateSignup = (req, res, next) => {
  * @param {object} req
  * @param {object} res
  * @returns {void} or @returns {error}
+ * @summary Sign up a new user to the application
  */
 const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -77,6 +78,7 @@ const signup = async (req, res) => {
  * @param {function} next
  * @param {object} passport
  * @returns {void}
+ * @summary Sign in a existing user to the application
  */
 const signin = (req, res, next) => {
   /**
@@ -119,6 +121,7 @@ const signin = (req, res, next) => {
  * @param {object} req
  * @param {object} res
  * @returns {void}
+ * @summary Sign out an existing user from the application
  */
 const signout = (req, res) => {
   /**
