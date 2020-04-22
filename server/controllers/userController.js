@@ -112,13 +112,40 @@ const deleteUser = async (req, res) => {
 
 /**
  * @function addFollowing
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @returns {function}
+ * @summary Follow another user
  */
-const addFollowing = () => {};
+const addFollowing = async (req, res, next) => {
+  const { followId } = req.body;
+
+  await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $push: { following: followId } }
+  );
+  next();
+};
 
 /**
  * @function addFollower
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @returns {function}
+ * @summary Shows user following another user
  */
-const addFollower = () => {};
+const addFollower = async (req, res) => {
+  const { followId } = req.body;
+
+  const user = await User.findOneAndUpdate(
+    { _id: followId },
+    { $push: { followers: req.user._id } },
+    { new: true }
+  );
+  res.json(user);
+};
 
 /**
  * @function deleteFollowing
