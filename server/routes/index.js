@@ -6,8 +6,8 @@ const postController = require("../controllers/postController");
 const router = express.Router();
 
 /* Error handler for async / await functions */
-const catchErrors = fn => {
-  return function(req, res, next) {
+const catchErrors = (fn) => {
+  return function (req, res, next) {
     return fn(req, res, next).catch(next);
   };
 };
@@ -40,10 +40,7 @@ router
   .delete(authController.checkAuth, catchErrors(userController.deleteUser));
 
 router.get("/api/users", userController.getUsers);
-router.get(
-  "/api/users/profile/:userId",
-  catchErrors(userController.getUserProfile)
-);
+router.get("/api/users/profile/:userId", userController.getUserProfile);
 router.get(
   "/api/users/feed/:userId",
   authController.checkAuth,
