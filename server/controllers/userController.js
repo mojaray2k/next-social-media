@@ -73,8 +73,24 @@ const getUserProfile = (req, res) => {
 
 /**
  * @function getUserFeed
+ * @param {object} req
+ * @param {object} res
+ * @returns {void}
+ * @summary Get a list off all users that the user is not following
  */
-const getUserFeed = () => {};
+const getUserFeed = async (req, res) => {
+  // exclude users we are following
+  const { following, _id } = req.profile;
+
+  // prevent user from following themselves
+  following.push(_id);
+
+  // find all the users that are $nin (not in) the users followers array
+  const users = await User.find({ _id: { $nin: following } }).select(
+    "_id name avatar"
+  );
+  res.json(users);
+};
 
 /**
  * @function uploadAvatar
