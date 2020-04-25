@@ -132,9 +132,8 @@ const addFollowing = async (req, res, next) => {
  * @function addFollower
  * @param {object} req
  * @param {object} res
- * @param {function} next
  * @returns {function}
- * @summary Shows user following another user
+ * @summary Shows user who is following them
  */
 const addFollower = async (req, res) => {
   const { followId } = req.body;
@@ -149,13 +148,39 @@ const addFollower = async (req, res) => {
 
 /**
  * @function deleteFollowing
+ * @param {object} req
+ * @param {object} res
+ * @param {function} next
+ * @returns {function}
+ * @summary Unfollow another user
  */
-const deleteFollowing = () => {};
+const deleteFollowing = async (req, res, next) => {
+  const { followId } = req.body;
+
+  await User.findOneAndUpdate(
+    { _id: req.user._id },
+    { $pull: { following: followId } }
+  );
+  next();
+};
 
 /**
  * @function deleteFollower
+ * @param {object} req
+ * @param {object} res
+ * @returns {function}
+ * @summary Shows user who is not following them
  */
-const deleteFollower = () => {};
+const deleteFollower = async (req, res) => {
+  const { followId } = req.body;
+
+  const user = await User.findOneAndUpdate(
+    { _id: followId },
+    { $pull: { followers: req.user._id } },
+    { new: true }
+  );
+  res.json(user);
+};
 
 module.exports = {
   getUsers,
