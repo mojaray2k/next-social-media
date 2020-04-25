@@ -76,7 +76,7 @@ const getUserProfile = (req, res) => {
  * @param {object} req
  * @param {object} res
  * @returns {void}
- * @summary Get a list off all users that the user is not following
+ * @summary Get a list off all users that the authenticated user is not following
  */
 const getUserFeed = async (req, res) => {
   // exclude users we are following
